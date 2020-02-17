@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ThemeProvider } from 'emotion-theming';
+import { ThemeProvider } from 'react-jss';
 import useEmotionTheme from 'hooks/useEmotionTheme';
 import 'assets/sass/common.scss';
 import App from 'App';

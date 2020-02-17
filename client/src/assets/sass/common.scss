@@ -16,6 +16,11 @@ input {
   font-family: 'Noto Sans TC', '微軟正黑體', sans-serif;
 }
 
+img,
+span {
+  vertical-align: middle;
+}
+
 /*webkit瀏覽器專用*/
 ::-webkit-input-placeholder {
   color: rgba(255, 255, 255, 0.5);

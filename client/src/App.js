@@ -1,36 +1,31 @@
 import React from 'react';
-import { css } from 'emotion';
-import { useTheme } from 'emotion-theming';
+import { useTheme, createUseStyles } from 'react-jss';
 
-import SignIn from './pages/SignIn';
-import Board from 'pages/Board';
+// import SignIn from './pages/SignIn';
+import Board from './pages/Board';
 
 const App = () => {
   const theme = useTheme();
-  const styled = styles();
+  const css = useStyles(theme);
 
   return (
-    <div className={styled['App'](theme)}>
+    <div className={css['app']}>
       {/* <SignIn /> */}
       <Board />
     </div>
   );
 };
 
-// css
-
-function styles() {
-  return {
-    App: theme => css`
-      width: 100%;
-      height: 100vh;
-      box-sizing: border-box;
-      background-color: ${theme.color.background};
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    `
-  };
-}
+const useStyles = createUseStyles(theme => ({
+  app: {
+    width: '100%',
+    height: '100vh',
+    boxSizing: 'border-box',
+    backgroundColor: theme.color.background,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+}));
 
 export default App;

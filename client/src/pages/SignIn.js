@@ -1,19 +1,18 @@
 import React from 'react';
-import { css } from 'emotion';
-import { useTheme } from 'emotion-theming';
+import { useTheme, createUseStyles } from 'react-jss';
 
 const SignIn = () => {
   const theme = useTheme();
-  const styled = styles();
+  const css = useStyles(theme);
 
   return (
-    <div className={styled['Signin']}>
-      <form className={styled['wrap']}>
-        <div className={styled['title']}>你的名字?</div>
+    <div className={css['signin']}>
+      <form className={css['wrap']}>
+        <div className={css['title']}>你的名字?</div>
         <input
           type="text"
           name="name"
-          className={styled['name'](theme)}
+          className={css['name']}
           placeholder="請輸入你的名字"
         />
       </form>
@@ -21,38 +20,31 @@ const SignIn = () => {
   );
 };
 
-// css
-
-function styles() {
-  return {
-    Signin: css`
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    `,
-
-    wrap: css`
-      text-align: left;
-      width: 90%;
-      max-width: 500px;
-    `,
-
-    title: css`
-      color: #fff;
-      font-size: 40px;
-      margin-bottom: 20px;
-    `,
-
-    name: theme => css`
-      border-bottom: 2px solid #fff;
-      width: 100%;
-      font-size: 30px;
-      color: ${theme.color.primary};
-      padding: 5px 10px;
-    `
-  };
-}
+const useStyles = createUseStyles(theme => ({
+  signin: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  wrap: {
+    textAlign: 'left',
+    width: '90%',
+    maxWidth: '500px'
+  },
+  title: {
+    color: '#fff',
+    fontSize: '40px',
+    marginBottom: '20px'
+  },
+  name: {
+    borderBottom: '2px solid #fff',
+    width: '100%',
+    fontSize: '30px',
+    color: theme.color.primary,
+    padding: '5px 10px'
+  }
+}));
 
 export default SignIn;

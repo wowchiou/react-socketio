@@ -1,59 +1,53 @@
 import React from 'react';
-import { css } from 'emotion';
+import { createUseStyles } from 'react-jss';
+
+import User from './User/User';
+import Member from './Member/Member';
 
 const MemberController = () => {
-  const styled = styles();
+  const css = useStyles();
+  const memberList = [
+    {
+      name: '皮卡丘',
+      avatar: 'https://pkq.herokuapp.com/static/Icon/25.png',
+      message: '你好壓',
+      time: '下午 02:43'
+    },
+    {
+      name: '皮卡丘',
+      avatar: 'https://pkq.herokuapp.com/static/Icon/25.png',
+      message: '你好壓',
+      time: '下午 02:43'
+    }
+  ];
 
   return (
-    <div className={styled['MemberController']}>
-      <ul className={styled['clients']}>
-        <li className={styled['clinet']}>
-          <div className={styled['avatar']}>
-            <img src="https://pkq.herokuapp.com/static/Icon/25.png" />
-          </div>
-          <div className={styled['content']}>
-            <div className={styled['name']}>
-              <span>皮卡丘</span>
-            </div>
-            <div className={styled['text']}>你好壓</div>
-          </div>
-          <div className={styled['time']}>
-            <span>下午 02:43</span>
-          </div>
-        </li>
+    <div className={css['memberController']}>
+      <div className={css['user']}>
+        <User />
+      </div>
+      <ul className={css['members']}>
+        {memberList.map(itm => (
+          <Member
+            avatar={itm.avatar}
+            message={itm.message}
+            name={itm.message}
+            time={itm.time}
+          />
+        ))}
       </ul>
     </div>
   );
 };
 
-// css
-function styles() {
-  return {
-    MemberController: css`
-      height: 100%;
-    `,
-
-    clients: css`
-      height: 100%;
-    `,
-
-    clinet: css`
-      display: flex;
-      justify-content: flex-start;
-      align-items: flex-start;
-    `,
-
-    content: css`
-      flex: 1;
-    `,
-
-    avatar: css`
-      width: 50px;
-      img {
-        width: 100%;
-      }
-    `
-  };
-}
+const useStyles = createUseStyles(theme => ({
+  memberController: {
+    height: '100%',
+    backgroundColor: 'rgba(255,255,255,0.8)'
+  },
+  member: {
+    height: '100%'
+  }
+}));
 
 export default MemberController;
