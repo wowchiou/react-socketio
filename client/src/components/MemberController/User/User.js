@@ -3,14 +3,15 @@ import { createUseStyles } from 'react-jss';
 
 const User = () => {
   const css = useStyles();
+  const clientData = JSON.parse(localStorage.getItem('pokemonChat'));
 
   return (
     <div className={css['user']}>
       <div className={css['avatar']}>
-        <img src="https://pkq.herokuapp.com/static/Icon/25.png" />
+        <img src={clientData.avatar} />
       </div>
       <div className={css['name']}>
-        <span>皮卡丘</span>
+        <span>{clientData.userName}</span>
       </div>
     </div>
   );

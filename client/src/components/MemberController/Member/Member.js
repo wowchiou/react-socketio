@@ -2,7 +2,7 @@ import React from 'react';
 import { createUseStyles } from 'react-jss';
 
 const Member = props => {
-  const { avatar, name, message, time } = props;
+  const { avatar, userName, message, time } = props;
   const css = useStyle();
 
   return (
@@ -12,7 +12,7 @@ const Member = props => {
       </div>
       <div className={css['content']}>
         <div className={css['name']}>
-          <span>{name}</span>
+          <span>{userName}</span>
         </div>
         <div className={css['text']}>{message}</div>
       </div>

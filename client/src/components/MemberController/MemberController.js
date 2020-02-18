@@ -4,22 +4,9 @@ import { createUseStyles } from 'react-jss';
 import User from './User/User';
 import Member from './Member/Member';
 
-const MemberController = () => {
+const MemberController = ({ memberList }) => {
   const css = useStyles();
-  const memberList = [
-    {
-      name: '皮卡丘',
-      avatar: 'https://pkq.herokuapp.com/static/Icon/25.png',
-      message: '你好壓',
-      time: '下午 02:43'
-    },
-    {
-      name: '皮卡丘',
-      avatar: 'https://pkq.herokuapp.com/static/Icon/25.png',
-      message: '你好壓',
-      time: '下午 02:43'
-    }
-  ];
+  const clientData = JSON.parse(localStorage.getItem('pokemonChat'));
 
   return (
     <div className={css['memberController']}>
@@ -27,14 +14,19 @@ const MemberController = () => {
         <User />
       </div>
       <ul className={css['members']}>
-        {memberList.map(itm => (
-          <Member
-            avatar={itm.avatar}
-            message={itm.message}
-            name={itm.message}
-            time={itm.time}
-          />
-        ))}
+        {memberList &&
+          memberList.map((itm, idx) => {
+            if (itm.id === clientData.id) return;
+            return (
+              <Member
+                key={itm.name + idx}
+                avatar={itm.avatar}
+                message={itm.message}
+                userName={itm.userName}
+                time={itm.time}
+              />
+            );
+          })}
       </ul>
     </div>
   );

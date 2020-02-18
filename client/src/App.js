@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { useTheme, createUseStyles } from 'react-jss';
 
-// import SignIn from './pages/SignIn';
+import SignIn from './pages/SignIn';
 import Board from './pages/Board';
 
 const App = () => {
@@ -10,8 +11,11 @@ const App = () => {
 
   return (
     <div className={css['app']}>
-      {/* <SignIn /> */}
-      <Board />
+      <Switch>
+        <Route path="/signin" component={SignIn} />
+        <Route path="/" exact component={Board} />
+        <Redirect to="/" />
+      </Switch>
     </div>
   );
 };
