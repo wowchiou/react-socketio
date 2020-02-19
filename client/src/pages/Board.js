@@ -9,7 +9,7 @@ const Board = props => {
   const [memberList, setMemberList] = useState(null);
 
   const initWebSocket = () => {
-    const clientInfo = JSON.parse(localStorage.getItem('pokemonChat'));
+    const clientInfo = JSON.parse(localStorage.getItem('chat-client-info'));
     socket.emit('login', clientInfo);
 
     socket.on('set members in room', members => {
@@ -17,14 +17,14 @@ const Board = props => {
     });
 
     socket.on('close socket', () => {
-      localStorage.removeItem('pokemonChat');
+      localStorage.removeItem('chat-client-info');
       socket.close();
     });
   };
 
   useEffect(() => {
-    if (!localStorage.getItem('pokemonChat')) {
-      props.history.push('/signin');
+    if (!localStorage.getItem('chat-client-info')) {
+      props.history.push('/auth');
     } else {
       if (socket) {
         // 連結上 socket 後監聽 socket event

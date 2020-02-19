@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { useTheme, createUseStyles } from 'react-jss';
 
-import SignIn from './pages/SignIn';
+import Auth from './pages/Auth';
 import Board from './pages/Board';
 
 const App = () => {
@@ -12,7 +12,7 @@ const App = () => {
   return (
     <div className={css['app']}>
       <Switch>
-        <Route path="/signin" component={SignIn} />
+        <Route path="/auth" component={Auth} />
         <Route path="/" exact component={Board} />
         <Redirect to="/" />
       </Switch>
