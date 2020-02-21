@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import { useTheme, createUseStyles } from 'react-jss';
-import {
-  ajaxBuildNewMember,
-  ajaxGetClientInfo,
-  ajaxSignIn,
-  ajaxSignUp
-} from '../shared/service';
+import { connect } from 'react-redux';
+import * as actions from '../store/actions';
+
+const mapStateToProps = state => {
+  return {
+    loading: state.auth.loading,
+    error: state.auth.error,
+    isLogin: state.auth.isLogin
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onAuth: data => {
+      dispatch(actions.onAuth(data));
+    }
+  };
+};
 
 const SignIn = props => {
+  const { loading, error, isLogin, onAuth } = props;
   const theme = useTheme();
   const css = useStyles(theme);
   const [authStatus, setAuthStatus] = useState('signIn');
@@ -18,71 +31,28 @@ const SignIn = props => {
 
   const authHandler = async e => {
     e.preventDefault();
-    try {
-      const authData = { email, password };
-      let authResponse = null;
-
-      if (authStatus === 'signUp') {
-        authResponse = await ajaxSignUp(authData);
-        const memberData = {
-          userName,
-          id: authResponse.data.localId
-        };
-        const res = await ajaxBuildNewMember(memberData);
-        localStorage.setItem('chat-formName', res.data.name);
-        alert('註冊成功');
-        setAuthStatus('sighIn');
-      } else {
-        authResponse = await ajaxSignIn(authData);
-        console.log(authResponse);
-        localStorage.setItem(
-          'chat-client-info',
-          JSON.stringify(authResponse.data)
-        );
-        alert('登入成功');
-      }
-      setEmail('');
-      setPassword('');
-      setUserName('');
-    } catch (error) {
-      console.log(error.response);
-      if (authStatus === 'signUp') {
-        alert('註冊未完成');
-      } else {
-        alert('登入失敗');
-      }
+    const authData = { email, password, authStatus };
+    if (authStatus === 'signUp') {
+      authData.userName = userName;
     }
+    await onAuth(authData);
+    resetFormValue();
+    console.log('jump');
+    props.history.push('/');
   };
 
-  const getClientInfo = async e => {
-    e.preventDefault();
-    try {
-      const id = JSON.parse(localStorage.getItem('chat-client-info')).localId;
-      const formName = localStorage.getItem('chat-formName');
-      const res = await ajaxGetClientInfo(id, formName);
-      console.log(res.data);
-      alert(`welcome ${res.data.userName}`);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const logOutHandler = e => {
-    e.preventDefault();
-    localStorage.removeItem('chat-client-info');
-    localStorage.removeItem('chat-formName');
-    alert('登出成功');
+  const resetFormValue = () => {
+    setEmail('');
+    setPassword('');
+    setUserName('');
   };
 
   const switchAuthStatus = status => {
     setAuthStatus(status);
-    alert(`now is ${status}`);
   };
 
   useEffect(() => {
-    if (localStorage.getItem('pokemonChat')) {
-      props.history.push('/');
-    }
+    isLogin && props.history.push('/');
   }, []);
 
   return (
@@ -121,12 +91,7 @@ const SignIn = props => {
             {authStatus === 'signUp' ? '註冊' : '登入'}
           </button>
         </div>
-        <div>
-          <button onClick={getClientInfo}>取得客戶資料</button>
-        </div>
-        <div>
-          <button onClick={logOutHandler}>登出</button>
-        </div>
+        {loading && <div>loading...</div>}
       </form>
     </div>
   );
@@ -137,6 +102,7 @@ const useStyles = createUseStyles(theme => ({
     width: '100%',
     height: '100%',
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -159,4 +125,4 @@ const useStyles = createUseStyles(theme => ({
   }
 }));
 
-export default withRouter(SignIn);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SignIn));

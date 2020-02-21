@@ -1,9 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'react-jss';
+import { connect } from 'react-redux';
 import webSocket from 'socket.io-client';
 import MemberController from '../components/MemberController/MemberController';
+import * as actions from '../store/actions';
+import { ajaxGetClientInfo } from '../shared/service';
+
+const mapStateToProps = state => {
+  console.log(state);
+  return {
+    loading: state.chat.loading,
+    error: state.chat.error,
+    isLogin: state.auth.isLogin
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onLogOut: () => {
+      dispatch(actions.onLogOut());
+    }
+  };
+};
 
 const Board = props => {
+  const { loading, error, isLogin, onLogOut } = props;
   const css = useStyles();
   const [socket, setSocket] = useState(null);
   const [memberList, setMemberList] = useState(null);
@@ -22,27 +43,53 @@ const Board = props => {
     });
   };
 
+  const getClientInfo = async () => {
+    try {
+      const clientInfo = JSON.parse(localStorage.getItem('chat-client-info'));
+      const userId = clientInfo.localId;
+      const res = await ajaxGetClientInfo(userId);
+      const formateRes = Object.keys(res.data)
+        .map(itm => {
+          return { formId: itm, info: res.data[itm] };
+        })
+        .reduce((obj, itm) => {
+          return { ...obj, ...itm };
+        }, {});
+      console.log(formateRes);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    if (!localStorage.getItem('chat-client-info')) {
-      props.history.push('/auth');
+    if (socket) {
+      console.log('connect successed');
+      // 監聽 socket 事件
+      initWebSocket();
     } else {
-      if (socket) {
-        // 連結上 socket 後監聽 socket event
-        console.log('connect successed');
-        initWebSocket();
-      } else {
-        // 尚未連結成功則重新連結 socket
-        setSocket(webSocket('http://localhost:9000'));
-      }
+      // 重新連結 socket
+      setSocket(webSocket('http://localhost:9000'));
     }
   }, [socket]);
+
+  useEffect(() => {
+    console.log(isLogin);
+    !isLogin && props.history.push('/auth');
+  }, [isLogin]);
 
   return (
     <div className={css['board']}>
       <div className={css['member_controller']}>
         {memberList && <MemberController memberList={memberList} />}
       </div>
-      <div className={css['message_controller']}>聊天內容</div>
+      <div className={css['message_controller']}>
+        <div>
+          <button onClick={getClientInfo}>取得客戶資料</button>
+        </div>
+        <div>
+          <button onClick={onLogOut}>登出</button>
+        </div>
+      </div>
     </div>
   );
 };
@@ -65,4 +112,4 @@ const useStyles = createUseStyles(theme => ({
   }
 }));
 
-export default Board;
+export default connect(mapStateToProps, mapDispatchToProps)(Board);
