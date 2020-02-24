@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import { useTheme, createUseStyles } from 'react-jss';
 import { connect } from 'react-redux';
 import * as actions from '../store/actions';
@@ -29,22 +29,13 @@ const SignIn = props => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const authHandler = async e => {
+  const authHandler = e => {
     e.preventDefault();
     const authData = { email, password, authStatus };
     if (authStatus === 'signUp') {
       authData.userName = userName;
     }
-    await onAuth(authData);
-    resetFormValue();
-    console.log('jump');
-    props.history.push('/');
-  };
-
-  const resetFormValue = () => {
-    setEmail('');
-    setPassword('');
-    setUserName('');
+    onAuth(authData);
   };
 
   const switchAuthStatus = status => {
@@ -57,6 +48,7 @@ const SignIn = props => {
 
   return (
     <div className={css['signin']}>
+      {isLogin && <Redirect to="/" />}
       <div onClick={() => switchAuthStatus('signIn')}>去登入</div>
       <div onClick={() => switchAuthStatus('signUp')}>去註冊</div>
       <form className={css['wrap']}>

@@ -29,10 +29,9 @@ const store = createStore(
   composeEnhancers(applyMiddleware(thunk))
 );
 
-const theme = useEmotionTheme();
 const app = (
   <Provider store={store}>
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={useEmotionTheme()}>
       <BrowserRouter>
         <App />
       </BrowserRouter>

@@ -43,12 +43,12 @@ export const onAuth = data => {
       if (data.authStatus === 'signUp') {
         // 註冊處理程序
         authResponse = await ajaxSignUp(authData);
-        console.log(authResponse);
         await ajaxBuildNewMember(authResponse.data.localId, data.userName);
       } else {
         // 登入處理程序
         authResponse = await ajaxSignIn(authData);
       }
+      console.log(authResponse);
 
       // 儲存使用者登入資料於本機
       localStorage.setItem(
@@ -57,7 +57,6 @@ export const onAuth = data => {
       );
 
       dispatch(authActions.success());
-      console.log('done');
     } catch (error) {
       let errorMessage = '';
       data.authStatus === 'signUp'
