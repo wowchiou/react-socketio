@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { createUseStyles } from 'react-jss';
 import { connect } from 'react-redux';
 import webSocket from 'socket.io-client';
-import MemberController from '../components/MemberController/MemberController';
 import * as actions from '../store/actions';
 
 const mapStateToProps = state => {
   return {
     loading: state.chat.loading,
     error: state.chat.error,
-    userName: state.chat.userName,
-    userAvatar: state.chat.avatar,
+    userInfo: { ...state.chat.userInfo },
     userFriends: state.chat.friends,
+    member: state.chat.member,
     isLogin: state.auth.isLogin
   };
 };
@@ -31,34 +30,15 @@ const Board = props => {
   const {
     loading,
     error,
-    userName,
-    userAvatar,
+    userInfo,
     userFriends,
+    member,
     isLogin,
     onLogOut,
     getClientInfo
   } = props;
   const css = useStyles();
   const [socket, setSocket] = useState(null);
-
-  // const getClientInfo = async () => {
-  //   try {
-  //     const clientInfo = JSON.parse(localStorage.getItem('chat-pokemon-info'));
-  //     const userId = clientInfo.localId;
-  //     const res = await ajaxGetClientInfo(userId);
-  //     const formateRes = Object.keys(res.data)
-  //       .map(itm => {
-  //         return { formId: itm, info: res.data[itm] };
-  //       })
-  //       .reduce((obj, itm) => {
-  //         return { ...obj, ...itm };
-  //       }, {});
-  //     console.log(formateRes);
-  //     setInfo(formateRes);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   useEffect(() => {
     if (!isLogin) {
@@ -68,37 +48,31 @@ const Board = props => {
     }
   }, [isLogin]);
 
-  // const initWebSocket = () => {
-  //   const clientInfo = JSON.parse(localStorage.getItem('chat-client-info'));
-  //   socket.emit('login', clientInfo);
+  const initWebSocket = useCallback(() => {
+    socket.emit('start', {
+      userName: userInfo.userName,
+      avatar: userInfo.avatar,
+      member: member
+    });
+  }, [userInfo, member]);
 
-  //   socket.on('set members in room', members => {
-  //     setMemberList(members);
-  //   });
-
-  //   socket.on('close socket', () => {
-  //     localStorage.removeItem('chat-client-info');
-  //     socket.close();
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   if (socket) {
-  //     console.log('connect successed');
-  //     // 監聽 socket 事件
-  //     initWebSocket();
-  //   } else {
-  //     // 重新連結 socket
-  //     setSocket(webSocket('http://localhost:9000'));
-  //   }
-  // }, [socket]);
+  useEffect(() => {
+    if (socket) {
+      console.log('connect socket server successed');
+      // 監聽 socket 事件
+      initWebSocket();
+    } else {
+      // 重新連結 socket
+      setSocket(webSocket('http://localhost:9000'));
+    }
+  }, [socket, initWebSocket]);
 
   return (
     <div className={css['board']}>
       <div className={css['left_side']}>
         <div className="user">
-          <div className="user_name">{userName}</div>
-          <div className="user_avatar">{userAvatar}</div>
+          <div className="user_name">{userInfo.userName}</div>
+          <div className="user_avatar">{userInfo.avatar}</div>
           <div className="user_friends">{userFriends}</div>
         </div>
       </div>

@@ -3,9 +3,13 @@ import * as actionTypes from '../actionTypes';
 const initState = {
   loading: false,
   error: null,
+  formId: null,
   friends: null,
-  userName: null,
-  avatar: null
+  userInfo: {
+    userName: null,
+    avatar: null
+  },
+  member: null
 };
 
 const chatReducer = (state = initState, action) => {
@@ -17,19 +21,24 @@ const chatReducer = (state = initState, action) => {
         error: null
       };
     case actionTypes.CHAT_SUCCESS:
-      const infoData = action.infoData.info;
-      console.log(infoData);
       return {
         ...state,
         loading: false,
         error: null,
-        userName: infoData.userName,
-        avatar: infoData.avatar,
-        friends: infoData.friends
+        formId: action.infoData.formId,
+        friends: action.infoData.info.friends,
+        userInfo: {
+          userName: action.infoData.info.userName,
+          avatar: action.infoData.info.avatar
+        },
+        member: action.infoData.member
       };
     case actionTypes.CHAT_FAIL:
       return {
-        ...state
+        ...state,
+        userInfo: null,
+        friends: null,
+        member: null
       };
     default:
       return state;

@@ -25,12 +25,11 @@ export const getClientInfo = () => {
   return async dispatch => {
     dispatch(chatActions.start());
     try {
-      const userId = JSON.parse(localStorage.getItem('chat-pokemon-info'))
-        .localId;
-      const res = await ajaxGetClientInfo(userId);
+      const infoData = JSON.parse(localStorage.getItem('chat-pokemon-info'));
+      const res = await ajaxGetClientInfo(infoData.localId);
       const formateRes = Object.keys(res.data)
         .map(itm => {
-          return { formId: itm, info: res.data[itm] };
+          return { formId: itm, info: res.data[itm], member: infoData.email };
         })
         .reduce((obj, itm) => {
           return { ...obj, ...itm };
